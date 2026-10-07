@@ -1,0 +1,12 @@
+{
+	"rewrites": [
+		{
+			"source": "/green-api/:path*",
+			"destination": "https://api.green-api.com/:path*"
+		},
+		{
+			"source": "/(.*)",
+			"destination": "/index.html"
+		}
+	]
+}
