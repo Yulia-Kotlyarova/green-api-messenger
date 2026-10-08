@@ -23,7 +23,6 @@ export const NewChatDialog = ({ open, onOpenChange }: NewChatDialogProps) => {
 			return;
 		}
 
-		console.log(recipient);
 		createChat({
 			recipient,
 			name: recipient,

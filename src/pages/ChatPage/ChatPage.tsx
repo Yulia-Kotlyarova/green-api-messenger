@@ -15,7 +15,6 @@ export const ChatPage = () => {
 	const [isNewChatOpen, setIsNewChatOpen] = useState(false);
 
 	useEffect(() => {
-		console.log('loadChats');
 		void loadChats();
 	}, [credentials?.idInstance]);
 

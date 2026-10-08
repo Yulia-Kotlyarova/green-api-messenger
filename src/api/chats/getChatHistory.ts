@@ -20,7 +20,6 @@ export const getChatHistory = ({
 	chatId,
 	count = 100,
 }: GetChatHistoryParams) => {
-	console.log('getChatHistory');
 	return request<GetChatHistoryResponseItem[]>(
 		`/green-api/waInstance${idInstance}/getChatHistory/${apiTokenInstance}`,
 		{

@@ -16,7 +16,6 @@ export const sendMessageApi = ({
 	chatId,
 	message,
 }: SendMessageParams) => {
-	console.log('message,', message);
 	return request<SendMessageResponse>(
 		`/green-api/waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
 		{

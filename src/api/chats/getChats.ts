@@ -13,7 +13,6 @@ interface GetChatsParams {
 }
 
 export const getChats = ({ idInstance, apiTokenInstance }: GetChatsParams) => {
-	console.log('GET_CHATS_API_FUNCTION');
 	return request<GetChatsResponseItem[]>(
 		`/green-api/waInstance${idInstance}/getChats/${apiTokenInstance}`,
 	);

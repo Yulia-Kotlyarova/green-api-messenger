@@ -1,14 +1,35 @@
-import { type FormEvent, useState } from 'react';
+import {
+	type FormEvent,
+	type KeyboardEvent as ReactKeyboardEvent,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 
 import { Button } from '@/components/ui/Button/Button';
 import { useChat } from '@/context/ChatContext';
 
 import styles from './Chat.module.css';
+import { formatMessageTime } from '@/helpers/formatMessageTime.ts';
 
 export const Chat = () => {
 	const { activeChat, isHistoryLoading, isMessageSending, sendMessage } = useChat();
 
 	const [message, setMessage] = useState('');
+	const messagesRef = useRef<HTMLDivElement>(null);
+
+	const activeChatId = activeChat?.id;
+	const messagesCount = activeChat?.messages.length;
+
+	useEffect(() => {
+		const container = messagesRef.current;
+
+		if (!container || isHistoryLoading) {
+			return;
+		}
+
+		container.scrollTop = container.scrollHeight;
+	}, [activeChatId, messagesCount, isHistoryLoading]);
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -21,6 +42,13 @@ export const Chat = () => {
 
 		await sendMessage(text);
 		setMessage('');
+	};
+
+	const handleKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
+		if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+			event.preventDefault();
+			event.currentTarget.form?.requestSubmit();
+		}
 	};
 
 	if (!activeChat) {
@@ -39,7 +67,7 @@ export const Chat = () => {
 				<span className={styles.username}>{activeChat.recipient}</span>
 			</header>
 
-			<div className={styles.messages}>
+			<div className={styles.messages} ref={messagesRef}>
 				{isHistoryLoading && <div className={styles.empty}>Загрузка сообщений...</div>}
 
 				{!isHistoryLoading && activeChat.messages.length === 0 && (
@@ -47,12 +75,14 @@ export const Chat = () => {
 				)}
 
 				{!isHistoryLoading &&
-					activeChat.messages.map((message) => (
+					activeChat.messages.map((item) => (
 						<div
-							key={message.id}
-							className={message.direction === 'outgoing' ? styles.outgoing : styles.incoming}
+							key={item.id}
+							className={item.direction === 'outgoing' ? styles.outgoing : styles.incoming}
 						>
-							{message.text}
+							<span className={styles.messageText}>{item.text}</span>
+
+							<span className={styles.messageTime}>{formatMessageTime(item.createdAt)}</span>
 						</div>
 					))}
 			</div>
@@ -61,10 +91,11 @@ export const Chat = () => {
 				<textarea
 					className={styles.textarea}
 					value={message}
-					placeholder="Сообщение"
+					placeholder="Написать сообщение..."
 					rows={1}
 					disabled={isMessageSending}
 					onChange={(event) => setMessage(event.target.value)}
+					onKeyDown={handleKeyDown}
 				/>
 
 				<Button type="submit" disabled={!message.trim() || isMessageSending}>

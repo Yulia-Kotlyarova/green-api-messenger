@@ -168,7 +168,6 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
 			setIsHistoryLoading(true);
 
 			try {
-				console.log('loadChatHistory chatId', recipient);
 				const response = await getChatHistory({
 					idInstance,
 					apiTokenInstance,
